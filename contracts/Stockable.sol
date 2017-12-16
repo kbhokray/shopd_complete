@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 contract Stockable {
 
-    enum ItemStatus { InStock, Delivered }
+    enum ItemStatus { ForSale, InUse }
     
     struct Item {
         string itemId;
@@ -23,7 +23,7 @@ contract Stockable {
     }
     
     function addToStock(address owner, string itemId, string itemName, uint price) public returns(bool) {
-        stock[itemId] = Item({itemId: itemId, itemName: itemName, owner: owner, price: price, status: ItemStatus.InStock});
+        stock[itemId] = Item({itemId: itemId, itemName: itemName, owner: owner, price: price, status: ItemStatus.ForSale});
     }
     
     function isBuyable(address orderer, string itemId, uint payment) constant public returns (bool){
@@ -36,7 +36,7 @@ contract Stockable {
         if(item.owner == orderer) {
             return false;
         }
-        if(item.status != ItemStatus.InStock) {
+        if(item.status != ItemStatus.ForSale) {
             return false;
         }
         if(item.price > payment) {
@@ -50,7 +50,8 @@ contract Stockable {
         return stock[itemId].owner;
     }
     
-    function removeFromStock(string itemId) internal {
-        delete stock[itemId];
+    function changeOwner(string itemId, address newOwner) internal {
+        stock[itemId].owner = newOwner;
+        stock[itemId].status = ItemStatus.InUse;
     }
 }

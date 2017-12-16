@@ -47,7 +47,7 @@ contract ShopD is Stockable, Orderable, Shippable {
         var itemId = super.getOrderItemId(orderId);
 
         super.settleOrder(orderId);
-        super.removeFromStock(itemId);
+        super.changeOwner(itemId, msg.sender);
     }
 
     function addShipper(address shipper) 
