@@ -4,6 +4,7 @@ contract Shippable {
     
     enum ShippmentStatus { InTransit, Delivered }
     struct Shippment {
+        string orderId;
         string itemId;
         address from;
         address to;
@@ -19,32 +20,32 @@ contract Shippable {
         _;
     }
 
-    function isInTransit(string itemId) 
+    function isInTransit(string orderId) 
     constant 
     public 
     returns(bool) {
-        if(bytes(shipments[itemId].itemId).length != 0) {
+        if(bytes(shipments[orderId].itemId).length != 0) {
             return true;
         } else {
             return false;
         }
     }
 
-    function ship(string itemId, address from, address to) 
+    function ship(string orderId, string itemId, address from, address to) 
     onlyRegisteredShipper 
     public {
-        shipments[itemId] = Shippment({itemId: itemId, from: from, to: to, shipper: msg.sender, status: ShippmentStatus.InTransit});
+        shipments[orderId] = Shippment({orderId:orderId, itemId: itemId, from: from, to: to, shipper: msg.sender, status: ShippmentStatus.InTransit});
     }
     
-    function updateShipmentStatus(string itemId, uint8 status) 
+    function updateShipmentStatus(string orderId, uint8 status) 
     onlyRegisteredShipper
     public {
-        require(bytes(shipments[itemId].itemId).length != 0);
-        require(shipments[itemId].shipper == msg.sender);
+        require(bytes(shipments[orderId].itemId).length != 0);
+        require(shipments[orderId].shipper == msg.sender);
         require(status <= uint8(ShippmentStatus.Delivered));
 
         if(status == 1) {
-            shipments[itemId].status = ShippmentStatus.Delivered;   
+            shipments[orderId].status = ShippmentStatus.Delivered;   
         }
     }
     

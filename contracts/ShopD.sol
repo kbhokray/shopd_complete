@@ -23,28 +23,30 @@ contract ShopD is Stockable, Orderable, Shippable {
         super.addToStock(msg.sender, itemId, itemName, price);
     }
     
-    function placeOrder(string itemId) public payable {
+    function order(string orderId, string itemId) public payable {
         require(super.isBuyable(msg.sender, itemId, msg.value));
         
         address itemOwner = super.getOwner(itemId);
-        super.placeOrder(itemId, itemOwner, msg.sender, msg.value);
+        super.placeOrder(orderId, itemId, itemOwner, msg.sender, msg.value);
     }
 
-    function shipOrder(string itemId) public {
-        require(super.isActiveOrder(itemId));
-        require(!super.isInTransit(itemId));
+    function shipOrder(string orderId) public {
+        require(super.isActiveOrder(orderId));
+        require(!super.isInTransit(orderId));
+        var itemId = super.getOrderItemId(orderId);
 
         address from;
         address to;
-        (from, to) = super.getOrderFromAndTo(itemId);
-        super.ship(itemId, from, to);
+        (from, to) = super.getOrderFromAndTo(orderId);
+        super.ship(orderId, itemId, from, to);
     }
     
-    function settle(string itemId) public {
-        require(super.isActiveOrder(itemId));
-        require(super.isRecipient(itemId, msg.sender));
-        
-        super.settleOrder(itemId);
+    function settle(string orderId) public {
+        require(super.isActiveOrder(orderId));
+        require(super.isRecipient(orderId, msg.sender));
+        var itemId = super.getOrderItemId(orderId);
+
+        super.settleOrder(orderId);
         super.removeFromStock(itemId);
     }
 

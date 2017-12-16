@@ -21,7 +21,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should reject low payment order', function(done) {
-		shopD.placeOrder("Id1", {from: buyerAccount, value: 29})
+		shopD.placeOrder("OrderId1", "Id1", {from: buyerAccount, value: 29})
 		.catch(function(err) {
 			assert.isOk(err);
 			done();
@@ -29,7 +29,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should place order', function(done) {
-		shopD.placeOrder("Id1", {from: buyerAccount, value: 30})
+		shopD.order("OrderId1", "Id1", {from: buyerAccount, value: 30})
 		.then(function(result) {
 			assert.isOk(result);
 			done();
@@ -45,7 +45,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should not ship order from an unregistered shipper', function(done) {
-		shopD.shipOrder("Id1", {from: nonShipperAccount})
+		shopD.shipOrder("OrderId1", {from: nonShipperAccount})
 		.catch(function(err) {
 			assert.isOk(err);
 			done();
@@ -53,7 +53,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should ship order from a registered shipper', function(done) {
-		shopD.shipOrder("Id1", {from: shipperAccount})
+		shopD.shipOrder("OrderId1", {from: shipperAccount})
 		.then(function(result) {
 			assert.isOk(result);
 			done();
@@ -61,7 +61,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should not ship an intransit order', function(done) {
-		shopD.shipOrder("Id1", {from: shipperAccount})
+		shopD.shipOrder("OrderId1", {from: shipperAccount})
 		.catch(function(err) {
 			assert.isOk(err);
 			done();
@@ -69,7 +69,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should not ship an intransit order', function(done) {
-		shopD.shipOrder("Id1", {from: shipperAccount})
+		shopD.shipOrder("OrderId1", {from: shipperAccount})
 		.catch(function(err) {
 			assert.isOk(err);
 			done();
@@ -77,7 +77,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should update shipment status', function(done) {
-		shopD.updateShipmentStatus("Id1", 1, {from: shipperAccount})
+		shopD.updateShipmentStatus("OrderId1", 1, {from: shipperAccount})
 		.then(function(result) {
 			assert.isOk(result);
 			done();
@@ -85,7 +85,7 @@ contract('ShopD', function(accounts) {
 	});
 
 	it('should settle order', function(done) {
-		shopD.settle("Id1", {from: buyerAccount})
+		shopD.settle("OrderId1", {from: buyerAccount})
 		.then(function(result) {
 			assert.isOk(result);
 			done();
